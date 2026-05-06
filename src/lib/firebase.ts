@@ -4,15 +4,20 @@ import { getDatabase } from "firebase/database";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyBK6gC4vdS4sWy3Yonp568qm10MsbEeejE",
-  authDomain: "insta-grow-6ade2.firebaseapp.com",
-  databaseURL: "https://insta-grow-6ade2-default-rtdb.firebaseio.com",
-  projectId: "insta-grow-6ade2",
-  storageBucket: "insta-grow-6ade2.firebasestorage.app",
-  messagingSenderId: "147116305536",
-  appId: "1:147116305536:web:95b898d0aff81d53ad0a65",
-  measurementId: "G-67QGNTYRQ0"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
+
+// Validate config before initializing
+if (!firebaseConfig.apiKey) {
+  console.error("Firebase API Key is missing. Please add VITE_FIREBASE_API_KEY to your environment variables in Settings.");
+}
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
