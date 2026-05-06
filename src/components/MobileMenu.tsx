@@ -20,20 +20,22 @@ interface MobileMenuProps {
   onAuthClick: (mode: 'login' | 'signup') => void;
   isLoggedIn: boolean;
   onLogout: () => void;
+  onOrdersClick: () => void;
+  onCreditsClick: () => void;
 }
 
 const menuItems = [
-  { icon: ShoppingBag, label: 'Orders' },
-  { icon: Wallet, label: 'Wallet' },
-  { icon: LifeBuoy, label: 'Support' },
-  { icon: Gift, label: 'Earn' },
-  { icon: User, label: 'Profile' },
-  { icon: MessageSquare, label: 'FAQ' },
-  { icon: Share2, label: 'Share' },
-  { icon: Settings, label: 'Settings' },
+  { icon: ShoppingBag, label: 'Orders', id: 'orders' },
+  { icon: Wallet, label: 'Wallet', id: 'wallet' },
+  { icon: LifeBuoy, label: 'Support', id: 'support' },
+  { icon: Gift, label: 'Earn', id: 'earn' },
+  { icon: User, label: 'Profile', id: 'profile' },
+  { icon: MessageSquare, label: 'FAQ', id: 'faq' },
+  { icon: Share2, label: 'Share', id: 'share' },
+  { icon: Settings, label: 'Settings', id: 'settings' },
 ];
 
-export default function MobileMenu({ isOpen, onClose, onAuthClick, isLoggedIn, onLogout }: MobileMenuProps) {
+export default function MobileMenu({ isOpen, onClose, onAuthClick, isLoggedIn, onLogout, onOrdersClick, onCreditsClick }: MobileMenuProps) {
   return (
     <AnimatePresence>
       {isOpen && (
@@ -91,6 +93,15 @@ export default function MobileMenu({ isOpen, onClose, onAuthClick, isLoggedIn, o
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.03 }}
+                    onClick={() => {
+                      if (item.id === 'orders') {
+                        onOrdersClick();
+                      }
+                      if (item.id === 'wallet' || item.id === 'earn') {
+                        onCreditsClick();
+                      }
+                      // Others can be handled here too
+                    }}
                     className="flex flex-col items-center justify-center gap-2 aspect-square rounded-xl bg-zinc-400 border border-zinc-500 hover:border-brand-red transition-all active:scale-90 group shadow-inner"
                   >
                     <item.icon className="w-5 h-5 text-black group-hover:text-brand-red transition-colors" />

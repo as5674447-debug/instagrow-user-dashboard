@@ -4,10 +4,13 @@ import { useState, useRef, useEffect } from 'react';
 
 interface NavbarProps {
   onMenuClick: () => void;
+  isLoggedIn: boolean;
+  userPhoto: string | null;
+  onLogout: () => void;
+  onAuthClick: () => void;
 }
 
-export default function Navbar({ onMenuClick }: NavbarProps) {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+export default function Navbar({ onMenuClick, isLoggedIn, userPhoto, onLogout, onAuthClick }: NavbarProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -65,10 +68,21 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
         <button 
           id="nav-user-btn"
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-          className={`p-2 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center ${isDropdownOpen ? 'text-brand-red' : 'hover:text-brand-red'}`}
+          className={`relative transition-all duration-300 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full ${isDropdownOpen ? 'bg-zinc-900 ring-2 ring-brand-red/50' : 'hover:bg-zinc-900'}`}
           aria-label="User Profile"
         >
-          <User className="w-6 h-6" />
+          {isLoggedIn && userPhoto ? (
+            <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-brand-red/30 group-hover:border-brand-red transition-colors">
+              <img 
+                src={userPhoto} 
+                alt="Profile" 
+                className="w-full h-full object-cover"
+                referrerPolicy="no-referrer"
+              />
+            </div>
+          ) : (
+            <User className={`w-6 h-6 ${isDropdownOpen ? 'text-brand-red' : 'text-zinc-400 group-hover:text-brand-red'}`} />
+          )}
         </button>
 
         {/* User Dropdown */}
@@ -78,29 +92,39 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
               initial={{ opacity: 0, y: 10, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 10, scale: 0.95 }}
-              className="absolute top-full right-0 mt-2 w-48 bg-zinc-950 border border-zinc-800 rounded-xl shadow-2xl overflow-hidden py-2"
+              className="absolute top-full right-0 mt-2 w-48 bg-zinc-950 border border-zinc-800 rounded-xl shadow-[0_10px_40px_rgba(0,0,0,1)] overflow-hidden py-2"
             >
               {isLoggedIn ? (
                 <button
                   onClick={() => {
-                    setIsLoggedIn(false);
+                    onLogout();
                     setIsDropdownOpen(false);
                   }}
-                  className="w-full px-4 py-3 flex items-center gap-3 text-zinc-400 hover:text-white hover:bg-zinc-900 transition-colors"
+                  className="w-full px-4 py-3 flex items-center gap-3 text-red-500 hover:text-white hover:bg-zinc-900 transition-colors group"
                 >
-                  <LogOut className="w-4 h-4" />
-                    <span className="text-sm">Sign Out</span>
+                  <motion.div
+                    whileHover={{ scale: 1.1, rotate: -10 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                  >
+                    <LogOut className="w-4 h-4" />
+                  </motion.div>
+                  <span className="text-sm font-bold uppercase tracking-tight">Sign Out</span>
                 </button>
               ) : (
                 <button
                   onClick={() => {
-                    setIsLoggedIn(true);
+                    onAuthClick();
                     setIsDropdownOpen(false);
                   }}
-                  className="w-full px-4 py-3 flex items-center gap-3 text-zinc-400 hover:text-brand-red hover:bg-zinc-900 transition-colors"
+                  className="w-full px-4 py-3 flex items-center gap-3 text-zinc-400 hover:text-brand-red hover:bg-zinc-900 transition-colors group"
                 >
-                  <LogIn className="w-4 h-4" />
-                    <span className="text-sm">Sign In</span>
+                  <motion.div
+                    whileHover={{ scale: 1.1, rotate: 10 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                  >
+                    <LogIn className="w-4 h-4" />
+                  </motion.div>
+                  <span className="text-sm font-bold uppercase tracking-tight">Sign In</span>
                 </button>
               )}
             </motion.div>

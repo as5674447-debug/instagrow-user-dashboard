@@ -15,8 +15,12 @@ import CommentPackages from './components/CommentPackages';
 import ViewPackages from './components/ViewPackages';
 import CheckoutModal from './components/CheckoutModal';
 import AuthBottomSheet from './components/AuthBottomSheet';
-import { auth } from './lib/firebase';
+import MyOrders from './components/MyOrders';
+import BottomNav from './components/BottomNav';
+import CreditsDrawer from './components/CreditsDrawer';
+import { auth, db } from './lib/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
+import { ref, onValue } from 'firebase/database';
 
 export default function App() {
   const [activePlatform, setActivePlatform] = useState('instagram');
@@ -25,6 +29,8 @@ export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
+  const [showOrders, setShowOrders] = useState(false);
+  const [isCreditsOpen, setIsCreditsOpen] = useState(false);
 
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<{
@@ -34,15 +40,28 @@ export default function App() {
     label: string;
   } | null>(null);
 
+  const [userMetadata, setUserMetadata] = useState<{ photoURL?: string | null }>({});
+
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
       if (user) {
         setIsLoggedIn(true);
+        // Listen to extra metadata in RTDB
+        const userRef = ref(db, `users/${user.uid}`);
+        const unsubscribeMetadata = onValue(userRef, (snapshot) => {
+          if (snapshot.exists()) {
+            setUserMetadata(snapshot.val());
+          }
+        });
+        return () => unsubscribeMetadata();
       } else {
         setIsLoggedIn(false);
+        setUserMetadata({});
+        setShowOrders(false); // Close orders on logout
+        setIsCreditsOpen(false); // Close credits on logout
       }
     });
-    return () => unsubscribe();
+    return () => unsubscribeAuth();
   }, []);
 
   const handleOrder = (type: string, count: string, price: number, label: string) => {
@@ -78,6 +97,28 @@ export default function App() {
     }
   };
 
+  const handleOrdersClick = () => {
+    if (!isLoggedIn) {
+      setAuthMode('login');
+      setIsAuthOpen(true);
+    } else {
+      setShowOrders(true);
+      setIsCreditsOpen(false);
+    }
+    setIsMenuOpen(false);
+  };
+
+  const handleCreditsClick = () => {
+    if (!isLoggedIn) {
+      setAuthMode('login');
+      setIsAuthOpen(true);
+    } else {
+      setIsCreditsOpen(true);
+      setShowOrders(false);
+    }
+    setIsMenuOpen(false);
+  };
+
   const metrics = ['followers', 'likes', 'comments', 'views', 'share', 'repost', 'save'];
 
   const handleSwipe = (direction: 'left' | 'right') => {
@@ -90,6 +131,20 @@ export default function App() {
   };
 
   const renderActivePackage = () => {
+    if (showOrders) {
+      return (
+        <motion.div 
+          key="my-orders"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.95 }}
+          className="h-full"
+        >
+          <MyOrders onClose={() => setShowOrders(false)} />
+        </motion.div>
+      );
+    }
+
     const isComingSoonMetric = ['share', 'repost', 'save'].includes(activeMetric);
 
     if (activePlatform !== 'instagram' || isComingSoonMetric) {
@@ -155,7 +210,16 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-black text-white selection:bg-brand-red selection:text-white flex flex-col">
-      <Navbar onMenuClick={() => setIsMenuOpen(true)} />
+      <Navbar 
+        onMenuClick={() => setIsMenuOpen(true)} 
+        isLoggedIn={isLoggedIn}
+        userPhoto={userMetadata.photoURL || auth.currentUser?.photoURL || null}
+        onLogout={handleLogout}
+        onAuthClick={() => {
+          setAuthMode('login');
+          setIsAuthOpen(true);
+        }}
+      />
       <div className="flex-1 flex flex-col pt-14 md:pt-16">
         <TabNavigation activePlatform={activePlatform} setActivePlatform={setActivePlatform} />
         <MetricNavigation 
@@ -177,7 +241,7 @@ export default function App() {
             }
           }}
         >
-          <div className="max-w-[1400px] mx-auto w-full h-full min-h-[60vh]">
+          <div className="max-w-[1400px] mx-auto w-full h-full min-h-[60vh] pb-32 md:pb-8">
             <AnimatePresence mode="wait">
               {renderActivePackage()}
             </AnimatePresence>
@@ -191,6 +255,8 @@ export default function App() {
         onAuthClick={handleMenuAuth}
         isLoggedIn={isLoggedIn}
         onLogout={handleLogout}
+        onOrdersClick={handleOrdersClick}
+        onCreditsClick={handleCreditsClick}
       />
       
       <CheckoutModal 
@@ -204,6 +270,30 @@ export default function App() {
         onClose={() => setIsAuthOpen(false)}
         onSuccess={handleAuthSuccess}
         initialMode={authMode}
+      />
+
+      <BottomNav 
+        activeTab={showOrders ? 'orders' : isCreditsOpen ? 'earn' : 'home'}
+        onTabChange={(tab) => {
+          if (tab === 'home') {
+            setShowOrders(false);
+            setIsCreditsOpen(false);
+          }
+          if (tab === 'orders') handleOrdersClick();
+          if (tab === 'earn') handleCreditsClick();
+        }}
+        onMenuClick={() => setIsMenuOpen(true)}
+        isLoggedIn={isLoggedIn}
+      />
+
+      <CreditsDrawer 
+        isOpen={isCreditsOpen}
+        onClose={() => setIsCreditsOpen(false)}
+        balances={{
+          free: (userMetadata as any).freeCredits || 0,
+          wallet: (userMetadata as any).walletBalance || 0,
+          refund: (userMetadata as any).refundBalance || 0
+        }}
       />
     </div>
   );

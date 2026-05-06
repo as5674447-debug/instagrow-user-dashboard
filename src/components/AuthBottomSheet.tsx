@@ -69,21 +69,41 @@ export default function AuthBottomSheet({ isOpen, onClose, onSuccess, initialMod
     setError(null);
     try {
       const provider = new GoogleAuthProvider();
+      // Add custom parameters to help with account selection if needed
+      provider.setCustomParameters({ prompt: 'select_account' });
+      
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
 
+      if (!user) throw new Error('No user data returned from Google');
+
       // Save/Update in RTDB
-      await set(ref(db, `users/${user.uid}`), {
-        uid: user.uid,
-        fullName: user.displayName || 'Google User',
-        email: user.email,
-        photoURL: user.photoURL,
-        lastLogin: new Date().toISOString()
-      });
+      try {
+        await set(ref(db, `users/${user.uid}`), {
+          uid: user.uid,
+          fullName: user.displayName || 'Google User',
+          email: user.email,
+          photoURL: user.photoURL,
+          lastLogin: new Date().toISOString(),
+          provider: 'google'
+        });
+      } catch (dbErr) {
+        console.error("Database save error:", dbErr);
+        // We don't block the login if DB save fails, but we should log it
+      }
 
       onSuccess();
     } catch (err: any) {
-      setError(err.message || 'Google login failed');
+      console.error("Google Auth Error:", err);
+      if (err.code === 'auth/popup-blocked') {
+        setError('Login popup blocked by your browser. Please allow popups for this site.');
+      } else if (err.code === 'auth/unauthorized-domain') {
+        setError('This domain is not authorized for Google Sign-in. Please add it in Firebase Console.');
+      } else if (err.code === 'auth/popup-closed-by-user') {
+        setError('Login cancelled by user');
+      } else {
+        setError(err.message || 'Google login failed. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
