@@ -1,4 +1,4 @@
-import { Home, ShoppingBag, Gift, Menu } from 'lucide-react';
+import { Home, ShoppingBag, Wallet, Menu } from 'lucide-react';
 import { motion } from 'motion/react';
 
 interface BottomNavProps {
@@ -12,7 +12,7 @@ export default function BottomNav({ activeTab, onTabChange, onMenuClick, isLogge
   const tabs = [
     { id: 'home', icon: Home, label: 'Home' },
     { id: 'orders', icon: ShoppingBag, label: 'Orders' },
-    { id: 'earn', icon: Gift, label: 'Free Credits' },
+    { id: 'wallet', icon: Wallet, label: 'Wallet' },
   ];
 
   return (

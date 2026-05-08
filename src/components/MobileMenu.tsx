@@ -22,6 +22,7 @@ interface MobileMenuProps {
   onLogout: () => void;
   onOrdersClick: () => void;
   onCreditsClick: () => void;
+  onSupportClick: () => void;
 }
 
 const menuItems = [
@@ -35,7 +36,7 @@ const menuItems = [
   { icon: Settings, label: 'Settings', id: 'settings' },
 ];
 
-export default function MobileMenu({ isOpen, onClose, onAuthClick, isLoggedIn, onLogout, onOrdersClick, onCreditsClick }: MobileMenuProps) {
+export default function MobileMenu({ isOpen, onClose, onAuthClick, isLoggedIn, onLogout, onOrdersClick, onCreditsClick, onSupportClick }: MobileMenuProps) {
   return (
     <AnimatePresence>
       {isOpen && (
@@ -99,6 +100,9 @@ export default function MobileMenu({ isOpen, onClose, onAuthClick, isLoggedIn, o
                       }
                       if (item.id === 'wallet' || item.id === 'earn') {
                         onCreditsClick();
+                      }
+                      if (item.id === 'support') {
+                        onSupportClick();
                       }
                       // Others can be handled here too
                     }}

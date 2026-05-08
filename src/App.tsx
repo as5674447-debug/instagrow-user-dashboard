@@ -18,6 +18,7 @@ import AuthBottomSheet from './components/AuthBottomSheet';
 import MyOrders from './components/MyOrders';
 import BottomNav from './components/BottomNav';
 import CreditsDrawer from './components/CreditsDrawer';
+import SupportDrawer from './components/SupportDrawer';
 import { auth, db } from './lib/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { ref, onValue } from 'firebase/database';
@@ -31,6 +32,7 @@ export default function App() {
   const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
   const [showOrders, setShowOrders] = useState(false);
   const [isCreditsOpen, setIsCreditsOpen] = useState(false);
+  const [isSupportOpen, setIsSupportOpen] = useState(false);
 
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<{
@@ -116,6 +118,11 @@ export default function App() {
       setIsCreditsOpen(true);
       setShowOrders(false);
     }
+    setIsMenuOpen(false);
+  };
+
+  const handleSupportClick = () => {
+    setIsSupportOpen(true);
     setIsMenuOpen(false);
   };
 
@@ -257,6 +264,7 @@ export default function App() {
         onLogout={handleLogout}
         onOrdersClick={handleOrdersClick}
         onCreditsClick={handleCreditsClick}
+        onSupportClick={handleSupportClick}
       />
       
       <CheckoutModal 
@@ -273,14 +281,14 @@ export default function App() {
       />
 
       <BottomNav 
-        activeTab={showOrders ? 'orders' : isCreditsOpen ? 'earn' : 'home'}
+        activeTab={showOrders ? 'orders' : isCreditsOpen ? 'wallet' : 'home'}
         onTabChange={(tab) => {
           if (tab === 'home') {
             setShowOrders(false);
             setIsCreditsOpen(false);
           }
           if (tab === 'orders') handleOrdersClick();
-          if (tab === 'earn') handleCreditsClick();
+          if (tab === 'wallet') handleCreditsClick();
         }}
         onMenuClick={() => setIsMenuOpen(true)}
         isLoggedIn={isLoggedIn}
@@ -290,10 +298,13 @@ export default function App() {
         isOpen={isCreditsOpen}
         onClose={() => setIsCreditsOpen(false)}
         balances={{
-          free: (userMetadata as any).freeCredits || 0,
           wallet: (userMetadata as any).walletBalance || 0,
-          refund: (userMetadata as any).refundBalance || 0
         }}
+      />
+
+      <SupportDrawer
+        isOpen={isSupportOpen}
+        onClose={() => setIsSupportOpen(false)}
       />
     </div>
   );

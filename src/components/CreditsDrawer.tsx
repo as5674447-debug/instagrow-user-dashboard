@@ -1,17 +1,15 @@
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Gift, Wallet, RotateCcw, TrendingUp, Info, Zap } from 'lucide-react';
+import { X, Wallet } from 'lucide-react';
 
 interface CreditsDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   balances?: {
-    free: number;
     wallet: number;
-    refund: number;
   };
 }
 
-export default function CreditsDrawer({ isOpen, onClose, balances = { free: 0, wallet: 0, refund: 0 } }: CreditsDrawerProps) {
+export default function CreditsDrawer({ isOpen, onClose, balances = { wallet: 0 } }: CreditsDrawerProps) {
   return (
     <AnimatePresence>
       {isOpen && (
@@ -33,29 +31,25 @@ export default function CreditsDrawer({ isOpen, onClose, balances = { free: 0, w
             className="fixed bottom-[72px] left-4 right-4 z-[80] pointer-events-none"
           >
             <div className="bg-black/90 backdrop-blur-2xl border border-zinc-800 rounded-3xl p-3 pointer-events-auto shadow-2xl flex gap-3">
-              {/* Free Credits Box */}
-              <div className="flex-1 bg-gradient-to-br from-zinc-200 via-zinc-100 to-zinc-400 p-3 rounded-2xl flex items-center gap-3 relative overflow-hidden group">
-                <div className="w-10 h-10 bg-black/10 rounded-xl flex items-center justify-center">
-                  <Gift className="w-5 h-5 text-zinc-800" />
+              {/* Wallet Balance Box */}
+              <div className="flex-1 bg-gradient-to-br from-green-500/20 to-emerald-500/10 border border-emerald-500/20 p-3 rounded-2xl flex items-center justify-between gap-3 relative overflow-hidden group">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-green-500/20 rounded-xl flex items-center justify-center">
+                    <Wallet className="w-5 h-5 text-green-500" />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-[8px] font-black text-green-500/70 uppercase tracking-widest leading-none mb-1">My Wallet</span>
+                    <span className="text-lg font-black text-white italic tracking-tighter leading-none">₹{balances.wallet}</span>
+                  </div>
                 </div>
-                <div className="flex flex-col">
-                  <span className="text-[8px] font-black text-zinc-600 uppercase tracking-widest leading-none mb-1">Free Credit</span>
-                  <span className="text-lg font-black text-black italic tracking-tighter leading-none">₹{balances.free}</span>
-                </div>
-                <div className="absolute top-1 right-1">
-                  <Zap className="w-2 h-2 text-zinc-500 fill-zinc-500" />
-                </div>
-              </div>
-
-              {/* Refund Balance Box */}
-              <div className="flex-1 bg-zinc-900 border border-zinc-800 p-3 rounded-2xl flex items-center gap-3">
-                <div className="w-10 h-10 bg-blue-500/10 rounded-xl flex items-center justify-center">
-                  <RotateCcw className="w-5 h-5 text-blue-500" />
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-[8px] font-black text-zinc-500 uppercase tracking-widest leading-none mb-1">Refund</span>
-                  <span className="text-lg font-black text-white italic tracking-tighter leading-none">₹{balances.refund}</span>
-                </div>
+                <a 
+                  href="https://razorpay.me/@instagrowx"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="h-10 px-4 bg-green-500 text-black text-[9px] font-black uppercase tracking-widest rounded-xl hover:bg-green-400 transition-all shadow-[0_4px_12px_rgba(34,197,94,0.4)] active:scale-95 flex items-center justify-center"
+                >
+                  Add Amount
+                </a>
               </div>
 
               {/* Close Button */}
