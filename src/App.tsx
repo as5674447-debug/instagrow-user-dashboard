@@ -127,6 +127,12 @@ export default function App() {
     setIsMenuOpen(false);
   };
 
+  const handleNewOrderClick = () => {
+    setShowOrders(false);
+    setIsCreditsOpen(false);
+    setIsMenuOpen(false);
+  };
+
   const metrics = ['followers', 'likes', 'comments', 'views', 'share', 'repost', 'save'];
 
   const handleSwipe = (direction: 'left' | 'right') => {
@@ -264,6 +270,7 @@ export default function App() {
         isLoggedIn={isLoggedIn}
         onLogout={handleLogout}
         onOrdersClick={handleOrdersClick}
+        onNewOrderClick={handleNewOrderClick}
         onCreditsClick={handleCreditsClick}
         onSupportClick={handleSupportClick}
       />

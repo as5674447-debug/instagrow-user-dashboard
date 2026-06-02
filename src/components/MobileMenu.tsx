@@ -11,7 +11,8 @@ import {
   MessageSquare,
   Share2,
   ShieldCheck,
-  User
+  User,
+  PlusCircle
 } from 'lucide-react';
 
 interface MobileMenuProps {
@@ -21,22 +22,23 @@ interface MobileMenuProps {
   isLoggedIn: boolean;
   onLogout: () => void;
   onOrdersClick: () => void;
+  onNewOrderClick: () => void;
   onCreditsClick: () => void;
   onSupportClick: () => void;
 }
 
 const menuItems = [
+  { icon: PlusCircle, label: 'New Order', id: 'new_order' },
   { icon: ShoppingBag, label: 'Orders', id: 'orders' },
   { icon: Wallet, label: 'Wallet', id: 'wallet' },
   { icon: LifeBuoy, label: 'Support', id: 'support' },
   { icon: Gift, label: 'Earn', id: 'earn' },
   { icon: User, label: 'Profile', id: 'profile' },
-  { icon: MessageSquare, label: 'FAQ', id: 'faq' },
   { icon: Share2, label: 'Share', id: 'share' },
   { icon: Settings, label: 'Settings', id: 'settings' },
 ];
 
-export default function MobileMenu({ isOpen, onClose, onAuthClick, isLoggedIn, onLogout, onOrdersClick, onCreditsClick, onSupportClick }: MobileMenuProps) {
+export default function MobileMenu({ isOpen, onClose, onAuthClick, isLoggedIn, onLogout, onOrdersClick, onNewOrderClick, onCreditsClick, onSupportClick }: MobileMenuProps) {
   return (
     <AnimatePresence>
       {isOpen && (
@@ -95,6 +97,9 @@ export default function MobileMenu({ isOpen, onClose, onAuthClick, isLoggedIn, o
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.03 }}
                     onClick={() => {
+                      if (item.id === 'new_order') {
+                        onNewOrderClick();
+                      }
                       if (item.id === 'orders') {
                         onOrdersClick();
                       }
