@@ -73,7 +73,7 @@ export default function MetricNavigation({ activePlatform, activeMetric, setActi
                 relative flex items-center justify-center px-4 sm:px-5 py-1.5 transition-all duration-300 min-h-[36px] scale-90 sm:scale-100 origin-center
                 ${activeMetric === metric.id 
                   ? 'text-white' 
-                  : 'text-zinc-600 hover:text-zinc-400'}
+                  : 'text-zinc-400 hover:text-zinc-200'}
               `}
             >
               {activeMetric === metric.id && (
@@ -85,7 +85,7 @@ export default function MetricNavigation({ activePlatform, activeMetric, setActi
                 />
               )}
               
-              <span className="text-[9px] sm:text-[10px] uppercase tracking-[0.15em] font-medium relative z-10 whitespace-nowrap">
+              <span className="text-[9px] sm:text-[11px] uppercase tracking-[0.15em] font-black relative z-10 whitespace-nowrap">
                 {metric.label}
               </span>
             </button>

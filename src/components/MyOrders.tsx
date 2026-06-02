@@ -156,7 +156,7 @@ export default function MyOrders({ onClose }: MyOrdersProps) {
                     <div className="bg-zinc-950 p-3 rounded-xl border border-zinc-800/50 flex items-center justify-between">
                       <div className="flex items-center gap-2 overflow-hidden flex-1 mr-4">
                         <Link2 className="w-3 h-3 text-brand-red flex-shrink-0" />
-                        <span className="text-[10px] font-mono text-zinc-500 truncate">{order.targetLink}</span>
+                        <span className="text-[10px] font-mono text-white break-all select-all flex-1">{order.targetLink}</span>
                       </div>
                       <a 
                         href={order.targetLink.startsWith('http') ? order.targetLink : `https://${order.targetLink}`}
@@ -167,6 +167,61 @@ export default function MyOrders({ onClose }: MyOrdersProps) {
                         <ExternalLink className="w-3 h-3" />
                       </a>
                     </div>
+
+                    {/* Live Progress Timer */}
+                    {order.status !== 'awaiting_payment' && (() => {
+                      const orderTime = new Date(order.orderDate).getTime();
+                      const fiveMinutesInMs = 5 * 60 * 1000;
+                      const timeElapsed = now - orderTime;
+                      const timeLeftMs = Math.max(0, fiveMinutesInMs - timeElapsed);
+                      const progressPercent = Math.min(100, Math.round((timeElapsed / fiveMinutesInMs) * 100));
+                      const isCompleted = timeLeftMs === 0;
+
+                      const minutes = Math.floor(timeLeftMs / 60000);
+                      const seconds = Math.floor((timeLeftMs % 60000) / 1000);
+                      const formattedTime = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+                      return (
+                        <div className="bg-zinc-950/40 border border-zinc-800/30 rounded-xl p-3 space-y-2">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <span className="relative flex h-2 w-2">
+                                {!isCompleted && (
+                                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-red opacity-75"></span>
+                                )}
+                                <span className={`relative inline-flex rounded-full h-2 w-2 ${isCompleted ? 'bg-green-500' : 'bg-brand-red'}`}></span>
+                              </span>
+                              <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-zinc-400">
+                                {isCompleted ? 'DELIVERED / COMPLETE' : 'PROCESSING (SPEED SLOTS ACTIVE)'}
+                              </span>
+                            </div>
+                            <span className="text-[11px] font-mono font-black italic text-brand-red tracking-wider">
+                              {isCompleted ? 'DONE' : formattedTime}
+                            </span>
+                          </div>
+                          
+                          {/* Progress bar container */}
+                          <div className="w-full bg-zinc-950 h-2.5 rounded-full overflow-hidden border border-zinc-800/40 p-[2px]">
+                            <motion.div 
+                              className={`h-full rounded-full ${
+                                isCompleted 
+                                  ? 'bg-gradient-to-r from-emerald-500 to-green-400' 
+                                  : 'bg-gradient-to-r from-brand-red via-red-500 to-amber-500'
+                              }`}
+                              style={{ width: `${progressPercent}%` }}
+                              initial={{ width: 0 }}
+                              animate={{ width: `${progressPercent}%` }}
+                              transition={{ duration: 0.5 }}
+                            />
+                          </div>
+
+                          <div className="flex items-center justify-between text-[8px] font-black uppercase tracking-widest text-zinc-500">
+                            <span className={isCompleted ? 'text-green-500' : 'text-brand-red'}>{progressPercent}% COMPLETED</span>
+                            <span className="text-zinc-500">5 Min Delivery Cycle</span>
+                          </div>
+                        </div>
+                      );
+                    })()}
 
                     <div className="flex items-center justify-between pt-1">
                       <div className="flex flex-col">
