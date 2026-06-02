@@ -13,6 +13,7 @@ interface CheckoutModalProps {
     count: string;
     price: number;
     label: string;
+    platform?: string;
   } | null;
 }
 
@@ -79,7 +80,7 @@ export default function CheckoutModal({ isOpen, onClose, orderData }: CheckoutMo
             status: 'pending',
             createdAt: serverTimestamp(),
             updatedAt: serverTimestamp(),
-            platform: 'instagram'
+            platform: orderData.platform || 'instagram'
           });
         }
       } catch (err) {

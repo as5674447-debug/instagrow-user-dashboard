@@ -40,6 +40,7 @@ export default function App() {
     count: string;
     price: number;
     label: string;
+    platform?: string;
   } | null>(null);
 
   const [userMetadata, setUserMetadata] = useState<{ photoURL?: string | null }>({});
@@ -67,7 +68,7 @@ export default function App() {
   }, []);
 
   const handleOrder = (type: string, count: string, price: number, label: string) => {
-    setSelectedOrder({ type, count, price, label });
+    setSelectedOrder({ type, count, price, label, platform: activePlatform });
     if (!isLoggedIn) {
       setAuthMode('login');
       setIsAuthOpen(true);
@@ -154,7 +155,7 @@ export default function App() {
 
     const isComingSoonMetric = ['share', 'repost', 'save'].includes(activeMetric);
 
-    if (activePlatform !== 'instagram' || isComingSoonMetric) {
+    if ((activePlatform !== 'instagram' && activePlatform !== 'facebook') || isComingSoonMetric) {
       return (
         <motion.div 
           key="coming-soon"
@@ -191,25 +192,25 @@ export default function App() {
       case 'likes':
         return (
           <motion.div key="likes" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-            <LikePackages onOrder={handleOrder} />
+            <LikePackages onOrder={handleOrder} platform={activePlatform} />
           </motion.div>
         );
       case 'comments':
         return (
           <motion.div key="comments" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-            <CommentPackages onOrder={handleOrder} />
+            <CommentPackages onOrder={handleOrder} platform={activePlatform} />
           </motion.div>
         );
       case 'views':
         return (
           <motion.div key="views" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-            <ViewPackages onOrder={handleOrder} />
+            <ViewPackages onOrder={handleOrder} platform={activePlatform} />
           </motion.div>
         );
       default:
         return (
           <motion.div key="followers" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-            <FollowerPackages onOrder={handleOrder} />
+            <FollowerPackages onOrder={handleOrder} platform={activePlatform} />
           </motion.div>
         );
     }

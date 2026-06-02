@@ -64,30 +64,30 @@ export default function MobileMenu({ isOpen, onClose, onAuthClick, isLoggedIn, o
                 onClose();
               }
             }}
-            className="fixed bottom-0 left-0 right-0 bg-zinc-950 border-t border-brand-red/30 z-[70] h-[55vh] min-h-[420px] flex flex-col touch-none"
+            className="fixed bottom-0 left-0 right-0 bg-zinc-950 border-t border-brand-red/30 z-[70] h-[55vh] md:h-[50vh] min-h-[420px] md:min-h-[400px] flex flex-col touch-none md:rounded-t-[48px] shadow-[0_-20px_60px_rgba(0,0,0,0.8)]"
           >
             {/* Handle Bar */}
-            <div className="flex justify-center pt-4 pb-2 cursor-grab active:cursor-grabbing">
+            <div className="flex justify-center pt-4 pb-2 cursor-grab active:cursor-grabbing md:hidden">
               <div className="w-12 h-1 bg-brand-red/20 rounded-full" />
             </div>
 
             {/* Header */}
-            <div className="flex items-center justify-between px-8 py-4 border-b border-zinc-900">
-              <h2 className="text-xl font-black uppercase tracking-tighter text-white flex items-center gap-2">
-                <span className="w-1.5 h-6 bg-brand-red -skew-x-12 inline-block" />
+            <div className="flex items-center justify-between px-8 py-3 md:py-6 md:px-16 border-b border-zinc-900 max-w-7xl mx-auto w-full">
+              <h2 className="text-xl md:text-2xl font-black uppercase tracking-tighter text-white flex items-center gap-2">
+                <span className="w-1.5 h-6 md:h-8 bg-brand-red -skew-x-12 inline-block" />
                 Menu
               </h2>
               <button 
                 onClick={onClose}
                 className="p-2 hover:bg-brand-red/10 rounded-full transition-colors group"
               >
-                <X className="w-6 h-6 text-zinc-500 group-hover:text-brand-red transition-colors" />
+                <X className="w-6 h-6 md:w-8 md:h-8 text-zinc-500 group-hover:text-brand-red transition-colors" />
               </button>
             </div>
 
-            {/* Menu Content - 4x2 Grid */}
-            <div className="flex-1 overflow-y-auto px-4 py-8">
-              <div className="grid grid-cols-4 gap-3">
+            {/* Menu Content - Single row on desktop */}
+            <div className="flex-1 overflow-y-auto px-4 py-8 md:py-16">
+              <div className="grid grid-cols-4 md:grid-cols-8 gap-3 md:gap-4 max-w-lg md:max-w-5xl mx-auto">
                 {menuItems.map((item, index) => (
                   <motion.button
                     key={item.label}
@@ -106,35 +106,35 @@ export default function MobileMenu({ isOpen, onClose, onAuthClick, isLoggedIn, o
                       }
                       // Others can be handled here too
                     }}
-                    className="flex flex-col items-center justify-center gap-2 aspect-square rounded-xl bg-zinc-400 border border-zinc-500 hover:border-brand-red transition-all active:scale-90 group shadow-inner"
+                    className="flex flex-col items-center justify-center gap-2 md:gap-3 aspect-square rounded-xl md:rounded-2xl bg-zinc-400 border border-zinc-500 hover:border-brand-red transition-all active:scale-90 group shadow-inner"
                   >
-                    <item.icon className="w-5 h-5 text-black group-hover:text-brand-red transition-colors" />
-                    <span className="text-[9px] font-black uppercase tracking-tighter text-black/80 group-hover:text-brand-red transition-colors">
+                    <item.icon className="w-5 h-5 md:w-10 md:h-10 text-black group-hover:text-brand-red transition-colors" />
+                    <span className="text-[9px] md:text-[10px] font-black uppercase tracking-tighter text-black/80 group-hover:text-brand-red transition-colors">
                       {item.label}
                     </span>
                   </motion.button>
                 ))}
               </div>
 
-              <div className="mt-8 grid grid-cols-2 gap-4 px-2">
+              <div className="mt-8 md:mt-16 grid grid-cols-2 gap-4 md:gap-8 px-2 max-w-lg md:max-w-5xl mx-auto">
                 {!isLoggedIn ? (
                   <>
                     <motion.button
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       onClick={() => onAuthClick('login')}
-                      className="flex items-center justify-center gap-2 p-3 text-sm transition-all active:scale-95 rounded-lg bg-zinc-900 text-zinc-300 border border-zinc-800 hover:border-zinc-700"
+                      className="flex items-center justify-center gap-2 p-3 md:p-5 text-sm md:text-base transition-all active:scale-95 rounded-lg md:rounded-2xl bg-zinc-900 text-zinc-300 border border-zinc-800 hover:border-zinc-700"
                     >
-                      <LogIn className="w-4 h-4" />
+                      <LogIn className="w-4 h-4 md:w-5 md:h-5" />
                       <span className="whitespace-nowrap font-bold uppercase tracking-tight">Sign In</span>
                     </motion.button>
                     <motion.button
                       initial={{ opacity: 0, x: 20 }}
                       animate={{ opacity: 1, x: 0 }}
                       onClick={() => onAuthClick('signup')}
-                      className="flex items-center justify-center gap-2 p-3 text-sm transition-all active:scale-95 rounded-lg bg-brand-red text-white"
+                      className="flex items-center justify-center gap-2 p-3 md:p-5 text-sm md:text-base transition-all active:scale-95 rounded-lg md:rounded-2xl bg-brand-red text-white"
                     >
-                      <UserPlus className="w-4 h-4" />
+                      <UserPlus className="w-4 h-4 md:w-5 md:h-5" />
                       <span className="whitespace-nowrap font-bold uppercase tracking-tight">Sign Up</span>
                     </motion.button>
                   </>
@@ -143,9 +143,9 @@ export default function MobileMenu({ isOpen, onClose, onAuthClick, isLoggedIn, o
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     onClick={onLogout}
-                    className="col-span-2 flex items-center justify-center gap-2 p-3 text-sm transition-all active:scale-95 rounded-lg bg-zinc-900 text-red-500 border border-red-500/20 hover:bg-red-500/10"
+                    className="col-span-2 flex items-center justify-center gap-2 p-3 md:p-5 text-sm md:text-base transition-all active:scale-95 rounded-lg md:rounded-2xl bg-zinc-900 text-red-500 border border-red-500/20 hover:bg-red-500/10"
                   >
-                    <LogIn className="w-4 h-4 rotate-180" />
+                    <LogIn className="w-4 h-4 md:w-5 md:h-5 rotate-180" />
                     <span className="whitespace-nowrap font-bold uppercase tracking-tight">Sign Out</span>
                   </motion.button>
                 )}

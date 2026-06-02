@@ -12,12 +12,13 @@ const platformMetrics: Record<string, { id: string; label: string }[]> = {
     { id: 'save', label: 'Save 🇮🇳' },
   ],
   facebook: [
-    { id: 'profile_followers', label: 'Profile followers 🇮🇳' },
-    { id: 'page_followers', label: 'Page followers 🇮🇳' },
+    { id: 'followers', label: 'Followers 🇮🇳' },
     { id: 'likes', label: 'Likes 🇮🇳' },
+    { id: 'comments', label: 'Comments 🇮🇳' },
     { id: 'views', label: 'Views 🇮🇳' },
-    { id: 'reach', label: 'Reach 🇮🇳' },
-    { id: 'engagement', label: 'Engagement 🇮🇳' },
+    { id: 'share', label: 'Share 🇮🇳' },
+    { id: 'repost', label: 'Repost 🇮🇳' },
+    { id: 'save', label: 'Save 🇮🇳' },
   ],
   whatsapp: [
     { id: 'status_views', label: 'Status Views 🇮🇳' },

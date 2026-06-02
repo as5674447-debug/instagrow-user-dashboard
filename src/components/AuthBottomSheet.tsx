@@ -20,6 +20,15 @@ interface AuthBottomSheetProps {
 
 export default function AuthBottomSheet({ isOpen, onClose, onSuccess, initialMode = 'login' }: AuthBottomSheetProps) {
   const [mode, setMode] = useState<'login' | 'signup'>(initialMode);
+  const [isIframe, setIsIframe] = useState(false);
+
+  useEffect(() => {
+    try {
+      setIsIframe(window.self !== window.top);
+    } catch (e) {
+      setIsIframe(true);
+    }
+  }, []);
 
   // Update mode if initialMode changes while closed
   useEffect(() => {
@@ -96,13 +105,13 @@ export default function AuthBottomSheet({ isOpen, onClose, onSuccess, initialMod
     } catch (err: any) {
       console.error("Google Auth Error:", err);
       if (err.code === 'auth/popup-blocked') {
-        setError('Login popup blocked by your browser. Please allow popups for this site.');
+        setError('Google Login popup was blocked. In the sandbox/iframe mode, please sign in with Email/Password (it works instantly!), or click the "Open in new window" button at the top-right of your screen.');
       } else if (err.code === 'auth/unauthorized-domain') {
-        setError('This domain is not authorized for Google Sign-in. Please add it in Firebase Console.');
+        setError('Google Sign-in is not authorized on this domain. Please use Email/Password sign-in or configure this domain in your Firebase console.');
       } else if (err.code === 'auth/popup-closed-by-user') {
-        setError('Login cancelled by user');
+        setError('Login cancelled.');
       } else {
-        setError(err.message || 'Google login failed. Please try again.');
+        setError(err.message || 'Google login failed. Please try again with Email & Password.');
       }
     } finally {
       setLoading(false);
@@ -192,6 +201,15 @@ export default function AuthBottomSheet({ isOpen, onClose, onSuccess, initialMod
             {/* Content */}
             <div className="flex-1 overflow-y-auto px-8 py-8">
               <div className="space-y-4">
+                {isIframe && (
+                  <div className="p-4 bg-brand-red/10 border border-brand-red/30 rounded-2xl flex items-start gap-3 text-zinc-300 text-[10px] font-bold uppercase tracking-wider leading-relaxed">
+                    <AlertCircle className="w-4 h-4 text-brand-red flex-shrink-0 mt-0.5" />
+                    <span>
+                      Preview Node Tip: Browsers block popups inside sandboxed frames. Please register/log in with <strong className="text-white">Email and Password</strong> directly here, or open the app in a new window using the icon at the top right to use Google login.
+                    </span>
+                  </div>
+                )}
+
                 {error && (
                   <div className="p-4 bg-red-500/10 border border-red-500/50 rounded-2xl flex items-center gap-3 text-red-500 text-xs font-bold uppercase tracking-tight">
                     <AlertCircle className="w-4 h-4 flex-shrink-0" />

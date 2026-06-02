@@ -35,7 +35,7 @@ function Counter({ target, duration = 3 }: { target: string; duration?: number }
   return <span>{count}</span>;
 }
 
-const packages = [
+const instagramPackages = [
   {
     count: '100',
     price: '15',
@@ -59,7 +59,32 @@ const packages = [
   }
 ];
 
-export default function CommentPackages({ onOrder }: { onOrder: (type: string, count: string, price: number, label: string) => void }) {
+const facebookPackages = [
+  {
+    count: '100',
+    price: '20',
+    label: 'FB Comments',
+    icon: MessageCircle,
+    tag: 'Intro'
+  },
+  {
+    count: '300',
+    price: '50',
+    label: 'FB Comments',
+    icon: Zap,
+    tag: 'Recommended'
+  },
+  {
+    count: '500',
+    price: '80',
+    label: 'FB Comments',
+    icon: TrendingUp,
+    tag: 'Power'
+  }
+];
+
+export default function CommentPackages({ onOrder, platform = 'instagram' }: { onOrder: (type: string, count: string, price: number, label: string) => void; platform?: string }) {
+  const packages = platform === 'facebook' ? facebookPackages : instagramPackages;
   const [customCount, setCustomCount] = useState<string>('');
   const [customPrice, setCustomPrice] = useState<number>(0);
   const [isTyping, setIsTyping] = useState(true);
@@ -84,21 +109,27 @@ export default function CommentPackages({ onOrder }: { onOrder: (type: string, c
 
   useEffect(() => {
     const val = parseInt(customCount) || 0;
-    let rate = 0.15; // Base rate
+    let price = 0;
     
-    if (val >= 1000) rate = 0.12;
-    else if (val >= 500) rate = 0.14;
-    else if (val >= 100) rate = 0.15;
-    
-    let price = Math.round(val * rate);
-    
-    // Apply psychological pricing for orders >= 500
-    if (val >= 500 && price > 0) {
-      price = price - 1;
+    if (platform === 'facebook') {
+      let rate = 0.20;
+      if (val >= 500) rate = 0.16;
+      else if (val >= 300) rate = 0.1666;
+      else if (val >= 100) rate = 0.20;
+      price = Math.round(val * rate);
+    } else {
+      let rate = 0.15; // Base rate
+      if (val >= 1000) rate = 0.12;
+      else if (val >= 500) rate = 0.14;
+      else if (val >= 100) rate = 0.15;
+      price = Math.round(val * rate);
+      if (val >= 500 && price > 0) {
+        price = price - 1;
+      }
     }
     
     setCustomPrice(price);
-  }, [customCount]);
+  }, [customCount, platform]);
 
   return (
     <section className="px-4 pt-2 pb-6 md:py-8 md:px-8">
@@ -107,7 +138,7 @@ export default function CommentPackages({ onOrder }: { onOrder: (type: string, c
         <div className="flex items-center gap-2">
           <MessageCircle className="w-6 h-6 text-brand-red fill-brand-red/20" />
           <h2 className="text-2xl font-black uppercase tracking-tighter text-white italic">
-            Comment Packages 🇮🇳
+            {platform === 'facebook' ? 'Facebook Comments 🇮🇳' : 'Comment Packages 🇮🇳'}
           </h2>
         </div>
       </div>
@@ -132,7 +163,7 @@ export default function CommentPackages({ onOrder }: { onOrder: (type: string, c
                   <Counter target={pkg.count} />
                 </span>
                 <span className="text-zinc-500 font-bold uppercase text-xs tracking-tight">
-                  {pkg.label} 🇮🇳
+                  {platform === 'facebook' ? 'FB Comments' : pkg.label} 🇮🇳
                 </span>
               </div>
             </div>
@@ -142,7 +173,7 @@ export default function CommentPackages({ onOrder }: { onOrder: (type: string, c
                 <span className="text-2xl font-black text-white italic">₹{pkg.price}</span>
               </div>
               <button 
-                onClick={() => onOrder('package', pkg.count, parseInt(pkg.price), pkg.label)}
+                onClick={() => onOrder('package', pkg.count, parseInt(pkg.price), platform === 'facebook' ? 'FB Comments' : pkg.label)}
                 className="px-4 py-1.5 bg-brand-red text-white text-[10px] font-black uppercase tracking-tighter -skew-x-12 hover:scale-105 active:scale-95 transition-all"
               >
                 Buy Now
@@ -191,7 +222,7 @@ export default function CommentPackages({ onOrder }: { onOrder: (type: string, c
                 )}
               </div>
               <span className="text-zinc-500 font-bold uppercase text-[10px] tracking-tight">
-                Comments 🇮🇳
+                {platform === 'facebook' ? 'FB Comments' : 'Comments'} 🇮🇳
               </span>
             </div>
           </div>
@@ -202,7 +233,7 @@ export default function CommentPackages({ onOrder }: { onOrder: (type: string, c
               <span className="text-2xl font-black text-brand-red italic">₹{customPrice}</span>
             </div>
             <button 
-              onClick={() => onOrder('custom', customCount, customPrice, 'Comments')}
+              onClick={() => onOrder('custom', customCount, customPrice, platform === 'facebook' ? 'FB Comments' : 'Comments')}
               className="px-4 py-1.5 bg-white text-black text-[10px] font-black uppercase tracking-tighter -skew-x-12 hover:bg-brand-red hover:text-white transition-all shadow-[4px_4px_0px_0px_rgba(255,255,255,0.2)]"
             >
               Order

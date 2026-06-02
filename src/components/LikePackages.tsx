@@ -35,7 +35,7 @@ function Counter({ target, duration = 3 }: { target: string; duration?: number }
   return <span>{count}</span>;
 }
 
-const packages = [
+const instagramPackages = [
   {
     count: '500',
     price: '30',
@@ -59,7 +59,32 @@ const packages = [
   }
 ];
 
-export default function LikePackages({ onOrder }: { onOrder: (type: string, count: string, price: number, label: string) => void }) {
+const facebookPackages = [
+  {
+    count: '100',
+    price: '10',
+    label: 'FB Likes',
+    icon: Heart,
+    tag: 'Quick Start'
+  },
+  {
+    count: '500',
+    price: '30',
+    label: 'FB Likes',
+    icon: Zap,
+    tag: 'Popular'
+  },
+  {
+    count: '1K',
+    price: '50',
+    label: 'FB Likes',
+    icon: TrendingUp,
+    tag: 'Best Value'
+  }
+];
+
+export default function LikePackages({ onOrder, platform = 'instagram' }: { onOrder: (type: string, count: string, price: number, label: string) => void; platform?: string }) {
+  const packages = platform === 'facebook' ? facebookPackages : instagramPackages;
   const [customCount, setCustomCount] = useState<string>('');
   const [customPrice, setCustomPrice] = useState<number>(0);
   const [isTyping, setIsTyping] = useState(true);
@@ -84,21 +109,27 @@ export default function LikePackages({ onOrder }: { onOrder: (type: string, coun
 
   useEffect(() => {
     const val = parseInt(customCount) || 0;
-    let rate = 0.08; // Base rate
+    let price = 0;
     
-    if (val >= 2000) rate = 0.045;
-    else if (val >= 1000) rate = 0.05;
-    else if (val >= 500) rate = 0.06;
-    
-    let price = Math.round(val * rate);
-    
-    // Apply psychological pricing for orders >= 1000
-    if (val >= 1000 && price > 0) {
-      price = price - 1;
+    if (platform === 'facebook') {
+      let rate = 0.10;
+      if (val >= 1000) rate = 0.05;
+      else if (val >= 500) rate = 0.06;
+      else if (val >= 100) rate = 0.10;
+      price = Math.round(val * rate);
+    } else {
+      let rate = 0.08; // Base rate
+      if (val >= 2000) rate = 0.045;
+      else if (val >= 1000) rate = 0.05;
+      else if (val >= 500) rate = 0.06;
+      price = Math.round(val * rate);
+      if (val >= 1000 && price > 0) {
+        price = price - 1;
+      }
     }
     
     setCustomPrice(price);
-  }, [customCount]);
+  }, [customCount, platform]);
 
   return (
     <section className="px-4 pt-2 pb-6 md:py-8 md:px-8">
@@ -107,7 +138,7 @@ export default function LikePackages({ onOrder }: { onOrder: (type: string, coun
         <div className="flex items-center gap-2">
           <Heart className="w-6 h-6 text-brand-red fill-brand-red/20" />
           <h2 className="text-2xl font-black uppercase tracking-tighter text-white italic">
-            Like Packages 🇮🇳
+            {platform === 'facebook' ? 'Facebook Likes 🇮🇳' : 'Like Packages 🇮🇳'}
           </h2>
         </div>
       </div>
@@ -132,7 +163,7 @@ export default function LikePackages({ onOrder }: { onOrder: (type: string, coun
                   <Counter target={pkg.count} />
                 </span>
                 <span className="text-zinc-500 font-bold uppercase text-xs tracking-tight">
-                  {pkg.label} 🇮🇳
+                  {platform === 'facebook' ? 'FB Likes' : pkg.label} 🇮🇳
                 </span>
               </div>
             </div>
@@ -142,7 +173,7 @@ export default function LikePackages({ onOrder }: { onOrder: (type: string, coun
                 <span className="text-2xl font-black text-white italic">₹{pkg.price}</span>
               </div>
               <button 
-                onClick={() => onOrder('package', pkg.count, parseInt(pkg.price), pkg.label)}
+                onClick={() => onOrder('package', pkg.count, parseInt(pkg.price), platform === 'facebook' ? 'FB Likes' : pkg.label)}
                 className="px-4 py-1.5 bg-brand-red text-white text-[10px] font-black uppercase tracking-tighter -skew-x-12 hover:scale-105 active:scale-95 transition-all"
               >
                 Buy Now
@@ -191,7 +222,7 @@ export default function LikePackages({ onOrder }: { onOrder: (type: string, coun
                 )}
               </div>
               <span className="text-zinc-500 font-bold uppercase text-[10px] tracking-tight">
-                Likes 🇮🇳
+                {platform === 'facebook' ? 'FB Likes' : 'Likes'} 🇮🇳
               </span>
             </div>
           </div>
@@ -202,7 +233,7 @@ export default function LikePackages({ onOrder }: { onOrder: (type: string, coun
               <span className="text-2xl font-black text-brand-red italic">₹{customPrice}</span>
             </div>
             <button 
-              onClick={() => onOrder('custom', customCount, customPrice, 'Likes')}
+              onClick={() => onOrder('custom', customCount, customPrice, platform === 'facebook' ? 'FB Likes' : 'Likes')}
               className="px-4 py-1.5 bg-white text-black text-[10px] font-black uppercase tracking-tighter -skew-x-12 hover:bg-brand-red hover:text-white transition-all shadow-[4px_4px_0px_0px_rgba(255,255,255,0.2)]"
             >
               Order

@@ -36,7 +36,7 @@ function Counter({ target, duration = 3 }: { target: string; duration?: number }
   return <span>{count}</span>;
 }
 
-const packages = [
+const instagramPackages = [
   {
     count: '100',
     price: '15',
@@ -60,7 +60,32 @@ const packages = [
   }
 ];
 
-export default function FollowerPackages({ onOrder }: { onOrder: (type: string, count: string, price: number, label: string) => void }) {
+const facebookPackages = [
+  {
+    count: '100',
+    price: '15',
+    label: 'FB Followers',
+    icon: Users,
+    tag: 'Quick Start'
+  },
+  {
+    count: '500',
+    price: '60',
+    label: 'FB Followers',
+    icon: Zap,
+    tag: 'Popular'
+  },
+  {
+    count: '1K',
+    price: '100',
+    label: 'FB Followers',
+    icon: TrendingUp,
+    tag: 'Best Value'
+  }
+];
+
+export default function FollowerPackages({ onOrder, platform = 'instagram' }: { onOrder: (type: string, count: string, price: number, label: string) => void; platform?: string }) {
+  const packages = platform === 'facebook' ? facebookPackages : instagramPackages;
   const [customCount, setCustomCount] = useState<string>('');
   const [customPrice, setCustomPrice] = useState<number>(0);
   const [isTyping, setIsTyping] = useState(true);
@@ -85,12 +110,12 @@ export default function FollowerPackages({ onOrder }: { onOrder: (type: string, 
 
   useEffect(() => {
     const val = parseInt(customCount) || 0;
-    let rate = 0.15; // Set consistent rate as requested
+    let rate = platform === 'facebook' ? 0.10 : 0.15; // FB rate is ₹100 per 1k (0.10)
     
     let price = Math.round(val * rate);
     
     setCustomPrice(price);
-  }, [customCount]);
+  }, [customCount, platform]);
 
   return (
     <section className="px-4 pt-2 pb-6 md:py-8 md:px-8">
@@ -99,7 +124,7 @@ export default function FollowerPackages({ onOrder }: { onOrder: (type: string, 
         <div className="flex items-center gap-2">
           <Users className="w-6 h-6 text-brand-red" />
           <h2 className="text-2xl font-black uppercase tracking-tighter text-white italic">
-            Follower Packages 🇮🇳
+            {platform === 'facebook' ? 'Facebook Followers 🇮🇳' : 'Follower Packages 🇮🇳'}
           </h2>
         </div>
       </div>
@@ -125,7 +150,7 @@ export default function FollowerPackages({ onOrder }: { onOrder: (type: string, 
                   <Counter target={pkg.count} />
                 </span>
                 <span className="text-zinc-500 font-bold uppercase text-xs tracking-tight">
-                  {pkg.label} 🇮🇳
+                  {platform === 'facebook' ? 'FB Followers' : pkg.label} 🇮🇳
                 </span>
               </div>
             </div>
@@ -135,7 +160,7 @@ export default function FollowerPackages({ onOrder }: { onOrder: (type: string, 
                 <span className="text-2xl font-black text-white italic">₹{pkg.price}</span>
               </div>
               <button 
-                onClick={() => onOrder('package', pkg.count, parseInt(pkg.price), pkg.label)}
+                onClick={() => onOrder('package', pkg.count, parseInt(pkg.price), platform === 'facebook' ? 'FB Followers' : pkg.label)}
                 className="px-4 py-1.5 bg-brand-red text-white text-[10px] font-black uppercase tracking-tighter -skew-x-12 hover:scale-105 active:scale-95 transition-all"
               >
                 Buy Now
@@ -185,7 +210,7 @@ export default function FollowerPackages({ onOrder }: { onOrder: (type: string, 
                 )}
               </div>
               <span className="text-zinc-500 font-bold uppercase text-[10px] tracking-tight">
-                Followers 🇮🇳
+                {platform === 'facebook' ? 'FB Followers' : 'Followers'} 🇮🇳
               </span>
             </div>
           </div>
@@ -196,7 +221,7 @@ export default function FollowerPackages({ onOrder }: { onOrder: (type: string, 
               <span className="text-2xl font-black text-brand-red italic">₹{customPrice}</span>
             </div>
             <button 
-              onClick={() => onOrder('custom', customCount, customPrice, 'Followers')}
+              onClick={() => onOrder('custom', customCount, customPrice, platform === 'facebook' ? 'FB Followers' : 'Followers')}
               className="px-4 py-1.5 bg-white text-black text-[10px] font-black uppercase tracking-tighter -skew-x-12 hover:bg-brand-red hover:text-white transition-all shadow-[4px_4px_0px_0px_rgba(255,255,255,0.2)]"
             >
               Order
