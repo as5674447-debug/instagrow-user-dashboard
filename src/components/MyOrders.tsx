@@ -75,9 +75,10 @@ export default function MyOrders({ onClose }: MyOrdersProps) {
           </div>
           <button 
             onClick={onClose}
-            className="p-2 hover:bg-zinc-900 rounded-full text-zinc-500 hover:text-white transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 hover:bg-zinc-900 rounded-full text-zinc-500 hover:text-white transition-all text-[11px] font-black uppercase tracking-wider"
           >
-            <ChevronRight className="w-5 h-5 rotate-180" />
+            <ChevronRight className="w-4 h-4 rotate-180" />
+            <span>Back</span>
           </button>
         </div>
       </div>

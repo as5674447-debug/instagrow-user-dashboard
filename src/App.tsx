@@ -19,6 +19,7 @@ import MyOrders from './components/MyOrders';
 import BottomNav from './components/BottomNav';
 import CreditsDrawer from './components/CreditsDrawer';
 import SupportDrawer from './components/SupportDrawer';
+import ProfileDrawer from './components/ProfileDrawer';
 import { auth, db } from './lib/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { ref, onValue } from 'firebase/database';
@@ -33,6 +34,7 @@ export default function App() {
   const [showOrders, setShowOrders] = useState(false);
   const [isCreditsOpen, setIsCreditsOpen] = useState(false);
   const [isSupportOpen, setIsSupportOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<{
@@ -62,6 +64,7 @@ export default function App() {
         setUserMetadata({});
         setShowOrders(false); // Close orders on logout
         setIsCreditsOpen(false); // Close credits on logout
+        setIsProfileOpen(false); // Close profile on logout
       }
     });
     return () => unsubscribeAuth();
@@ -124,6 +127,18 @@ export default function App() {
 
   const handleSupportClick = () => {
     setIsSupportOpen(true);
+    setIsMenuOpen(false);
+  };
+
+  const handleProfileClick = () => {
+    if (!isLoggedIn) {
+      setAuthMode('login');
+      setIsAuthOpen(true);
+    } else {
+      setIsProfileOpen(true);
+      setShowOrders(false);
+      setIsCreditsOpen(false);
+    }
     setIsMenuOpen(false);
   };
 
@@ -273,6 +288,7 @@ export default function App() {
         onNewOrderClick={handleNewOrderClick}
         onCreditsClick={handleCreditsClick}
         onSupportClick={handleSupportClick}
+        onProfileClick={handleProfileClick}
       />
       
       <CheckoutModal 
@@ -313,6 +329,13 @@ export default function App() {
       <SupportDrawer
         isOpen={isSupportOpen}
         onClose={() => setIsSupportOpen(false)}
+      />
+
+      <ProfileDrawer 
+        isOpen={isProfileOpen}
+        onClose={() => setIsProfileOpen(false)}
+        userMetadata={userMetadata}
+        onLogout={handleLogout}
       />
     </div>
   );

@@ -25,6 +25,7 @@ interface MobileMenuProps {
   onNewOrderClick: () => void;
   onCreditsClick: () => void;
   onSupportClick: () => void;
+  onProfileClick: () => void;
 }
 
 const menuItems = [
@@ -38,7 +39,7 @@ const menuItems = [
   { icon: Settings, label: 'Settings', id: 'settings' },
 ];
 
-export default function MobileMenu({ isOpen, onClose, onAuthClick, isLoggedIn, onLogout, onOrdersClick, onNewOrderClick, onCreditsClick, onSupportClick }: MobileMenuProps) {
+export default function MobileMenu({ isOpen, onClose, onAuthClick, isLoggedIn, onLogout, onOrdersClick, onNewOrderClick, onCreditsClick, onSupportClick, onProfileClick }: MobileMenuProps) {
   return (
     <AnimatePresence>
       {isOpen && (
@@ -109,7 +110,9 @@ export default function MobileMenu({ isOpen, onClose, onAuthClick, isLoggedIn, o
                       if (item.id === 'support') {
                         onSupportClick();
                       }
-                      // Others can be handled here too
+                      if (item.id === 'profile') {
+                        onProfileClick();
+                      }
                     }}
                     className="flex flex-col items-center justify-center gap-2 md:gap-3 aspect-square rounded-xl md:rounded-2xl bg-zinc-400 border border-zinc-500 hover:border-brand-red transition-all active:scale-90 group shadow-inner"
                   >

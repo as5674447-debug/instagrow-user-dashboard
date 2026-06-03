@@ -11,7 +11,7 @@ export default function SupportDrawer({ isOpen, onClose }: SupportDrawerProps) {
   const [message, setMessage] = useState('');
 
   const handleSend = (channel: 1 | 2) => {
-    const phoneNumber = channel === 1 ? '918000000001' : '918000000002'; // Placeholders
+    const phoneNumber = channel === 1 ? '919001570211' : '918854019233';
     const encodedMessage = encodeURIComponent(message || 'Hello, I need support.');
     window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
   };
@@ -94,6 +94,7 @@ export default function SupportDrawer({ isOpen, onClose }: SupportDrawerProps) {
                   <div className="text-center">
                     <span className="block text-[8px] md:text-[7px] font-black text-zinc-500 uppercase tracking-widest leading-none mb-1">WhatsApp</span>
                     <span className="block text-sm md:text-xs font-black text-white italic tracking-tighter">Channel 1</span>
+                    <span className="block text-[9px] text-zinc-400 font-mono tracking-tight mt-0.5">90015 70211</span>
                   </div>
                 </button>
 
@@ -112,6 +113,7 @@ export default function SupportDrawer({ isOpen, onClose }: SupportDrawerProps) {
                   <div className="text-center">
                     <span className="block text-[8px] md:text-[7px] font-black text-zinc-500 uppercase tracking-widest leading-none mb-1">WhatsApp</span>
                     <span className="block text-sm md:text-xs font-black text-white italic tracking-tighter">Channel 2</span>
+                    <span className="block text-[9px] text-zinc-400 font-mono tracking-tight mt-0.5">88540 19233</span>
                   </div>
                 </button>
               </div>
